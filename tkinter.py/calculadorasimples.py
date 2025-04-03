@@ -1,47 +1,56 @@
 from tkinter import *
 
+
 # Função de cálculo
 def calculando():
+    erro_tratamento.place_forget()
+    expressao = Digite.get()
+        
     try:
-        expressao = Digite.get()
         total = eval(expressao)
-        resultado.config(text=total)
-        resultado.place(x=170, y=64, anchor='center')  # Exibe o resultado
-        Digite.delete(0, END)  # Limpa o campo de entrada
-        if total > 100000000:
+        Digite.delete(0, END)
+        Digite.insert(END, total)
+        if total > 10000000:
             raise ValueError
+        if not expressao or expressao.isdigit():
+            raise ArithmeticError
     except:
-        resultado.config(text='Erro!')
-        resultado.place(x=170, y=64, anchor='center')
+        erro_tratamento.place(x=170, y=60, anchor='center')
         Digite.delete(0, END)
 
-# Adiciona um número no display e esconde o resultado
+# Adiciona um número no display
 def pegar_numero(n):
-    resultado.place_forget()  # Esconde o resultado ao digitar novamente
+    erro_tratamento.place_forget()
+    expressao = Digite.get()
     Digite.insert(END, n)
 
-# Adiciona o símbolo de soma, evitando duplicação de operadores
+# Adiciona o operador (+)
 def pegar_soma():
+    erro_tratamento.place_forget()
     expressao = Digite.get()
     Digite.insert(END, '+')
 
-def limpando():
-    Digite.delete(0, END)
-    resultado.place_forget()
+# Adiciona o operador (-)
+def pegar_menos():
+    erro_tratamento.place_forget()
+    expressao = Digite.get()
+    Digite.insert(END, '-')
 
+def limpando():
+    erro_tratamento.place_forget()
+    Digite.delete(0, END)
 
 # Criando a janela
 janela = Tk()
+
+# Config
 janela.geometry("340x400")
 janela.title("Calculadora")
+janela.resizable(False, False)
 
 # Campo de entrada
 Digite = Entry(janela, font=("Arial", 40), width=10, justify='center', bg='white')
 Digite.pack(padx=10, pady=20, ipady=10)
-
-# Resultado (começa escondido)
-resultado = Label(janela, text='', font=('Arial', 40), background='white')
-resultado.place_forget()  # Esconde o resultado no início
 
 # Criando os botões numéricos
 numeros = [
@@ -51,18 +60,25 @@ numeros = [
     (0, 120, 350)
 ]
 
+# Loop (pegando os números e as posições dadas à partir do **numeros**(variavel))
 for num, x, y in numeros:
     Button(janela, text=num, width=8, height=2, command=lambda n=num: pegar_numero(n)).place(x=x, y=y, anchor='center')
 
 # Botão de soma
 Button(janela, text='+', width=8, height=2, command=pegar_soma).place(x=190, y=350, anchor='center')
 
+# Botão menos
+Button(janela, text='-', width=8, height=2, command=pegar_menos).place(x=280, y=300, anchor='center')
+
 # Botão calcular
-Button(janela, text='Calcular', padx=10, pady=10, command=calculando).place(x=250, y=340)
+Button(janela, text='Calcular', width=8, height=2, command=calculando).place(x=280, y=350, anchor='center')
 
 # Botão Limpar
-
 limpar = Button(janela, text='Limpar', width=8, height=2, command=limpando)
 limpar.place(x=50, y=350, anchor='center')
+
+# Mensagem de erro
+erro_tratamento = Label(janela, text='Erro', font=('Arial', 40), background='white')
+erro_tratamento.forget()
 
 janela.mainloop()
